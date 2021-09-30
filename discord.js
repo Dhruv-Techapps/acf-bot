@@ -34,6 +34,7 @@ function getEmbed(title, fields, variant, color) {
 }
 
 app.get('/notifyDiscord', async ({ query: { id, title, fields, variant = 'stable', color = '#198754' } }, res) => {
+  console.log(id, title, fields, variant, color)
   if (id && title && fields) {
     client.users
       .fetch(id)
