@@ -1,0 +1,9 @@
+{
+  "discord": {
+    "client_id": "823765451199873044",
+    "client_secret": "0FH2O4flqbUZVKML58Mf7Ai0NCX7bK-S",
+    "scope": "identify email guilds.join",
+    "guild_id": "702091948902711388",
+    "bot": "ODIzNzY1NDUxMTk5ODczMDQ0.YFllXA.OeDNjOl7tBmhEeuHlAPMIv7w4X8"
+  }
+}
