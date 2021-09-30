@@ -4,7 +4,6 @@ const { Client, Intents, MessageEmbed } = require('discord.js')
 require('dotenv').config()
 
 const app = express()
-const port = 3000
 
 const client = new Client({ intents: [Intents.FLAGS.GUILD_MEMBERS] })
 client.on('ready', () => {
@@ -50,6 +49,4 @@ app.get('/notifyDiscord', async ({ query: { id, title, fields, variant = 'stable
   }
 })
 app.get('/', (req, res) => res.send('Hello World'))
-app.listen(process.env.BOT_PORT, () => {
-  console.log(`Example app listening at http://localhost:${port}`)
-})
+app.listen(process.env.BOT_PORT)
