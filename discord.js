@@ -48,7 +48,7 @@ app.get('/notifyDiscord', async ({ query: { id, title, fields, variant = 'stable
     res.send('Parameters are missing')
   }
 })
-
+app.get('/', (req, res) => res.send('Hello World'))
 app.listen(process.env.BOT_PORT, () => {
   console.log(`Example app listening at http://localhost:${port}`)
 })
