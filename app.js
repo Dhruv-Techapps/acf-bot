@@ -59,7 +59,7 @@ async function main() {
   const secretName = 'ACF-BOT-TOKEN'
   // Read the secret we created
   const TOKEN = await secretClient.getSecret(secretName)
-  client.login(TOKEN)
+  client.login(TOKEN.value)
 }
 
 main().catch(error => {
