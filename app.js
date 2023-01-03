@@ -1,19 +1,13 @@
 /* eslint-disable no-console */
+const { SecretClient } = require('@azure/keyvault-secrets')
+const { DefaultAzureCredential } = require('@azure/identity')
 const express = require('express')
 const { Client, GatewayIntentBits, EmbedBuilder } = require('discord.js')
-
-if (process.env.NODE_ENV !== 'production') {
-  // eslint-disable-next-line global-require
-  require('dotenv').config()
-}
-
-const app = express()
 
 const client = new Client({ intents: [GatewayIntentBits.GuildMembers] })
 client.on('ready', () => {
   console.log('Bot is online')
 })
-client.login(process.env.TOKEN)
 
 function getEmbed(title, fields, variant = 'stable', color = '198754') {
   const messageEmbed = new EmbedBuilder()
@@ -31,6 +25,7 @@ function getEmbed(title, fields, variant = 'stable', color = '198754') {
   return messageEmbed
 }
 
+const app = express()
 app.get('/notifyDiscord', async ({ query: { id, title, fields, variant = 'stable', color = '#198754' } }, res) => {
   if (id && title && fields) {
     client.users
@@ -48,4 +43,26 @@ app.get('/notifyDiscord', async ({ query: { id, title, fields, variant = 'stable
   }
 })
 app.get('/', (req, res) => res.send('Hello World'))
-app.listen(3000)
+app.listen(process.env.PORT || 3000)
+
+async function main() {
+  const credential = new DefaultAzureCredential()
+
+  const keyVaultName = 'acf-vault'
+  const url = `https://${keyVaultName}.vault.azure.net`
+
+  const secretClient = new SecretClient(url, credential)
+  // Create a secret
+  // The secret can be a string of any kind. For example,
+  // a multiline text block such as an RSA private key with newline characters,
+  // or a stringified JSON object, like `JSON.stringify({ mySecret: 'SECRET_VALUE'})`.
+  const secretName = 'ACF-BOT-TOKEN'
+  // Read the secret we created
+  const TOKEN = await secretClient.getSecret(secretName)
+  client.login(TOKEN)
+}
+
+main().catch(error => {
+  console.error('An error occurred:', error)
+  process.exit(1)
+})
