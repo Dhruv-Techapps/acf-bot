@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 const { SecretClient } = require('@azure/keyvault-secrets')
 const { DefaultAzureCredential } = require('@azure/identity')
 const express = require('express')
@@ -6,6 +5,7 @@ const { Client, GatewayIntentBits, EmbedBuilder } = require('discord.js')
 
 const client = new Client({ intents: [GatewayIntentBits.GuildMembers] })
 client.on('ready', () => {
+  // eslint-disable-next-line no-console
   console.log('Bot is online')
 })
 
@@ -15,34 +15,38 @@ function getEmbed(title, fields, variant = 'stable', color = '198754') {
     .setColor(color.replace('#', ''))
     .setTitle(title)
     .setURL(`https://${variant.toLowerCase()}.getautoclicker.com/`)
-    .setThumbnail(`https://blog.getautoclicker.com/icons/${variant.toLowerCase()}_icon48.png`)
+    .setThumbnail(`https://getautoclicker.com/icons/${variant.toLowerCase()}_icon48.png`)
     .setTimestamp()
-    .setFooter({ text: `Auto Clicker - AutoFill ${variant}`, iconURL: 'https://blog.getautoclicker.com/icons/stable_icon48.png' })
-  const fieldArray = JSON.parse(fields)
-  fieldArray.forEach(field => {
+    .setFooter({ text: `Auto Clicker - AutoFill ${variant}`, iconURL: 'https://getautoclicker.com/icons/stable_icon48.png' })
+  fields.forEach(field => {
     messageEmbed.addFields(field)
   })
   return messageEmbed
 }
 
 const app = express()
-app.get('/notifyDiscord', async ({ query: { id, title, fields, variant = 'stable', color = '#198754' } }, res) => {
+app.use(express.json())
+
+app.post('/discord', async (req, res) => {
+  const {
+    body: { id, title, fields, variant = 'stable', color = '#198754' }
+  } = req
+  // eslint-disable-next-line no-console
+  console.log(JSON.stringify(req.headers.origin))
   if (id && title && fields) {
     client.users
       .fetch(id)
       .then(user => {
         const embed = getEmbed(title, fields, variant, color)
-        user
-          .send({ embeds: [embed] })
-          .then(() => res.send('Success'))
-          .catch(error => res.send(error || 'Error while sending message Discord Client'))
+        // eslint-disable-next-line no-console
+        user.send({ embeds: [embed] }).catch(error => console.error(error || 'Error while sending message Discord Client'))
       })
-      .catch(error => res.send(error || `Error while fetching user Discord Client ${id}`))
-  } else {
-    res.send('Parameters are missing')
+      // eslint-disable-next-line no-console
+      .catch(error => console.error(error || `Error while fetching user Discord Client ${id}`))
   }
+  res.send('Hello')
 })
-app.get('/', (req, res) => res.send('Hello World'))
+
 app.listen(process.env.PORT || 3000)
 
 async function main() {
@@ -63,6 +67,7 @@ async function main() {
 }
 
 main().catch(error => {
+  // eslint-disable-next-line no-console
   console.error('An error occurred:', error)
   process.exit(1)
 })
