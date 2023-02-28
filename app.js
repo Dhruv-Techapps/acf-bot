@@ -3,6 +3,7 @@ const { DefaultAzureCredential } = require('@azure/identity')
 const express = require('express')
 const { Client, GatewayIntentBits, EmbedBuilder } = require('discord.js')
 
+const origins = ['chrome-extension://abcfldlhjfincogogjfbbkdnbfnlaaef', 'chrome-extension://cpjikgcdmhfnmaiibplplldlchbjejel', 'chrome-extension://nmcpliniiebkbdehpgicgfcidgkpepep']
 const client = new Client({ intents: [GatewayIntentBits.GuildMembers] })
 client.on('ready', () => {
   // eslint-disable-next-line no-console
@@ -27,24 +28,21 @@ function getEmbed(title, fields, variant = 'stable', color = '198754') {
 const app = express()
 app.use(express.json())
 
-app.post('/discord', async (req, res) => {
-  const {
-    body: { id, title, fields, variant = 'stable', color = '#198754' }
-  } = req
-  // eslint-disable-next-line no-console
-  console.log(JSON.stringify(req.headers.origin))
-  if (id && title && fields) {
-    client.users
-      .fetch(id)
-      .then(user => {
-        const embed = getEmbed(title, fields, variant, color)
+app.post('/discord', async ({ body: { id, title, fields, variant = 'stable', color = '#198754' }, headers: { origin } }, res) => {
+  if (origins.includes(origin)) {
+    if (id && title && fields) {
+      client.users
+        .fetch(id)
+        .then(user => {
+          const embed = getEmbed(title, fields, variant, color)
+          // eslint-disable-next-line no-console
+          user.send({ embeds: [embed] }).catch(error => console.error(error || 'Error while sending message Discord Client'))
+        })
         // eslint-disable-next-line no-console
-        user.send({ embeds: [embed] }).catch(error => console.error(error || 'Error while sending message Discord Client'))
-      })
-      // eslint-disable-next-line no-console
-      .catch(error => console.error(error || `Error while fetching user Discord Client ${id}`))
+        .catch(error => console.error(error || `Error while fetching user Discord Client ${id}`))
+    }
   }
-  res.send('Hello')
+  res.send('')
 })
 
 app.listen(process.env.PORT || 3000)
