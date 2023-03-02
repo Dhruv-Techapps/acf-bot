@@ -3,7 +3,12 @@ const { DefaultAzureCredential } = require('@azure/identity')
 const express = require('express')
 const { Client, GatewayIntentBits, EmbedBuilder } = require('discord.js')
 
-const origins = ['chrome-extension://abcfldlhjfincogogjfbbkdnbfnlaaef', 'chrome-extension://cpjikgcdmhfnmaiibplplldlchbjejel', 'chrome-extension://nmcpliniiebkbdehpgicgfcidgkpepep']
+const origins = [
+  'chrome-extension://iapifmceeokikomajpccajhjpacjmibe',
+  'chrome-extension://cpjikgcdmhfnmaiibplplldlchbjejel',
+  'chrome-extension://nmcpliniiebkbdehpgicgfcidgkpepep',
+  'chrome-extension://blfahkipmbikdeipdaogkjggbmgbippe'
+]
 const client = new Client({ intents: [GatewayIntentBits.GuildMembers] })
 client.on('ready', () => {
   // eslint-disable-next-line no-console
